@@ -1087,6 +1087,7 @@ function showResult() {
     `;
   }).join('');
   document.getElementById('resultDetail').innerHTML = reviewHtml;
+  document.getElementById('resultWrap').classList.remove('hidden');
   document.getElementById('resultWrap').classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
