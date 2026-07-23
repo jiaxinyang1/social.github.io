@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社会认知测试 — 你真的了解这个世界吗？</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #fff;
+    --text: #2c2c2c;
+    --muted: #8c8c82;
+    --border: #e6e4dd;
+    --accent: #3d3929;
+    --gold: #b8954a;
+    --red-soft: #f5e6e0;
+    --red-text: #a04030;
+    --green-soft: #e0ece3;
+    --green-text: #3a6040;
+    --yellow-soft: #f4ecd8;
+    --yellow-text: #8a7030;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 48px 20px 100px; }
+
+  /* ====== 封面 ====== */
+  .cover { text-align: center; padding: 50px 0 30px; }
+  .cover h1 { font-size: 2em; font-weight: 800; letter-spacing: 1px; margin-bottom: 10px; }
+  .cover .subtitle { font-size: 1em; color: var(--muted); margin-bottom: 8px; }
+  .cover .subtitle2 { font-size: 0.88em; color: #aaa; margin-bottom: 32px; }
+  .cover .meta { display: flex; justify-content: center; gap: 36px; font-size: 0.85em; color: #999; margin-bottom: 40px; }
+  .cover .meta span { display: flex; align-items: center; gap: 5px; }
+  .start-btn {
+    padding: 13px 52px; background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; font-size: 1.05em; cursor: pointer; letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .start-btn:hover { background: #555045; }
+
+  /* ====== 进度 ====== */
+  .progress-wrap { display: none; margin-bottom: 28px; }
+  .progress-bar-bg { background: #e8e6df; border-radius: 5px; height: 5px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 5px; transition: width 0.35s; width: 0%; }
+  .progress-info { display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.8em; color: #aaa; }
+
+  /* ====== 题目卡片 ====== */
+  .question-card {
+    display: none; background: var(--card); border-radius: 14px; padding: 36px 30px;
+    margin-bottom: 20px; border: 1px solid var(--border);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.03);
+  }
+  .question-card.active { display: block; animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .q-index { font-size: 0.78em; color: #bbb; letter-spacing: 3px; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; }
+  .q-label { font-size: 0.82em; color: var(--muted); margin-bottom: 18px; font-style: italic; }
+
+  /* 情景叙述 — 更长的故事 */
+  .scenario {
+    font-size: 0.98em; line-height: 1.85; color: #3a3a3a; margin-bottom: 28px;
+    padding: 20px 22px; background: #fafaf7; border-radius: 8px;
+    border-left: 3px solid #d5d0c5;
+  }
+  .scenario p { margin-bottom: 10px; }
+  .scenario p:last-child { margin-bottom: 0; }
+
+  /* ====== 选项 ====== */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex; align-items: flex-start; gap: 13px;
+    padding: 15px 18px; border: 1.5px solid var(--border); border-radius: 10px;
+    cursor: pointer; transition: all 0.18s;
+  }
+  .option:hover { border-color: #bab5a8; background: #fdfdfb; }
+  .option.selected { border-color: var(--accent); background: #f8f7f2; }
+  .option .radio {
+    width: 19px; height: 19px; min-width: 19px;
+    border: 2px solid #c8c4ba; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin-top: 3px;
+    transition: all 0.18s;
+  }
+  .option.selected .radio { border-color: var(--accent); }
+  .option.selected .radio::after {
+    content: ""; width: 9px; height: 9px; background: var(--accent); border-radius: 50%;
+  }
+  .option .opt-label { font-weight: 600; font-size: 0.82em; color: #b0ab9e; min-width: 20px; margin-top: 2px; }
+  .option.selected .opt-label { color: var(--accent); }
+  .option .opt-text { flex: 1; font-size: 0.93em; }
+
+  /* ====== 导航 ====== */
+  .nav-btns { display: none; justify-content: space-between; margin-top: 28px; }
+  .nav-btn {
+    padding: 10px 32px; border-radius: 7px; font-size: 0.92em; cursor: pointer;
+    border: 1.5px solid #ccc; background: #fff; transition: all 0.15s;
+  }
+  .nav-btn:hover:not(:disabled) { border-color: #999; }
+  .nav-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav-btn.primary:hover:not(:disabled) { background: #555045; }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ====== 提交弹窗 ====== */
+  .submit-modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 100; align-items: center; justify-content: center;
+  }
+  .submit-modal.show { display: flex; }
+  .submit-modal .modal-inner {
+    background: #fff; border-radius: 14px; padding: 36px 32px; max-width: 420px;
+    width: 90%; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  }
+  .submit-modal .modal-inner h3 { font-size: 1.15em; margin-bottom: 10px; }
+  .submit-modal .modal-inner p { font-size: 0.9em; color: #777; margin-bottom: 24px; line-height: 1.6; }
+  .submit-modal .modal-btns { display: flex; gap: 12px; justify-content: center; }
+  .submit-modal .modal-btns button {
+    padding: 9px 30px; border-radius: 7px; font-size: 0.9em; cursor: pointer; border: 1.5px solid #ccc;
+    background: #fff; transition: all 0.15s;
+  }
+  .submit-modal .modal-btns button.confirm { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ====== 结果页 ====== */
+  .result-wrap { display: none; }
+  .result-wrap.active { display: block; animation: fadeUp 0.5s ease; }
+
+  .result-hero {
+    text-align: center; padding: 36px 0 20px;
+  }
+  .result-hero .score-number {
+    font-size: 5em; font-weight: 800; letter-spacing: -2px;
+    color: var(--accent); line-height: 1;
+  }
+  .result-hero .score-label { font-size: 0.95em; color: var(--muted); margin-top: 4px; }
+  .result-hero .profile-tag {
+    display: inline-block; margin-top: 14px; padding: 6px 20px;
+    border-radius: 20px; font-size: 0.92em; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .profile-tag.level-a { background: var(--green-soft); color: var(--green-text); }
+  .profile-tag.level-b { background: #e8ece6; color: #506040; }
+  .profile-tag.level-c { background: var(--yellow-soft); color: var(--yellow-text); }
+  .profile-tag.level-d { background: #f5ede4; color: #8a6040; }
+  .profile-tag.level-e { background: var(--red-soft); color: var(--red-text); }
+
+  /* 维度分析卡片 */
+  .dimensions {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0 30px;
+  }
+  @media (max-width: 500px) { .dimensions { grid-template-columns: 1fr; } }
+  .dim-card {
+    background: var(--card); border-radius: 10px; padding: 18px 18px; border: 1px solid var(--border);
+  }
+  .dim-card .dim-name { font-size: 0.85em; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+  .dim-card .dim-bar-bg { background: #eae7df; border-radius: 4px; height: 8px; overflow: hidden; margin-bottom: 6px; }
+  .dim-card .dim-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .dim-card .dim-score { font-size: 0.8em; color: var(--muted); }
+  .fill-high { background: #7a9a70; }
+  .fill-mid { background: #c4a35a; }
+  .fill-low { background: #c47a5a; }
+
+  .result-summary {
+    background: var(--card); border-radius: 10px; padding: 24px 22px; margin-bottom: 28px;
+    border: 1px solid var(--border); font-size: 0.93em; line-height: 1.8; color: #4a4a4a;
+  }
+
+  /* 逐题回顾 */
+  .review-title {
+    font-size: 1.05em; font-weight: 700; margin-bottom: 16px; color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .review-item {
+    background: var(--card); border-radius: 10px; padding: 22px 20px; margin-bottom: 14px;
+    border: 1px solid var(--border);
+  }
+  .review-item .ri-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+  }
+  .review-item .ri-num { font-weight: 700; font-size: 0.82em; color: #999; }
+  .review-item .ri-tendency {
+    font-size: 0.78em; padding: 3px 10px; border-radius: 10px; font-weight: 600;
+  }
+  .tendency-trust { background: #fde8e2; color: #a04838; }
+  .tendency-avoid { background: #f4eee2; color: #8a6a38; }
+  .tendency-confront { background: #f0e4e0; color: #7a4848; }
+  .tendency-conform { background: #e8e4dc; color: #6a5a48; }
+  .tendency-strategic { background: #dce8dc; color: #3a5a38; }
+  .tendency-defensive { background: #e4dce4; color: #5a4a5a; }
+  .review-item .ri-choice { font-size: 0.9em; color: #5a5a5a; margin-bottom: 8px; }
+  .review-item .ri-read { font-size: 0.88em; color: #4a4a4a; line-height: 1.7; padding: 10px 14px; background: #fafaf6; border-radius: 6px; border-left: 2px solid #d5d0c0; }
+
+  .restart-btn {
+    display: block; margin: 36px auto 0; padding: 11px 40px;
+    border: 1.5px solid #ccc; border-radius: 8px; background: #fff;
+    font-size: 0.9em; cursor: pointer; transition: all 0.15s;
+  }
+  .restart-btn:hover { border-color: #999; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container" id="app">
+
+  <!-- ========== 封面 ========== -->
+  <div class="cover" id="cover">
+    <h1>走出校园的第一课</h1>
+    <p class="subtitle">一份没有标准答案的行为评估</p>
+    <p class="subtitle2">15 个真实情境 &middot; 每种选择都代表一种生存策略</p>
+    <div class="meta">
+      <span>15 道情景题</span><span>约 15 分钟</span><span>行为画像分析</span>
+    </div>
+    <button class="start-btn" onclick="startTest()">开始</button>
+  </div>
+
+  <!-- ========== 进度条 ========== -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+    <div class="progress-info">
+      <span id="progressLabel">第 1 / 15 题</span>
+      <span id="progressAnswered">已答 0 题</span>
+    </div>
+  </div>
+
+  <!-- ========== 题目区 ========== -->
+  <div id="questions"></div>
+
+  <!-- ========== 导航 ========== -->
+  <div class="nav-btns" id="navBtns">
+    <button class="nav-btn" id="prevBtn" onclick="prevQuestion()">上一题</button>
+    <button class="nav-btn primary" id="nextBtn" onclick="nextQuestion()">下一题</button>
+  </div>
+
+  <!-- ========== 提交确认弹窗 ========== -->
+  <div class="submit-modal" id="submitModal">
+    <div class="modal-inner">
+      <h3>确认提交</h3>
+      <p>所有题目均已作答。提交后将基于你的全部选择生成一份行为画像分析。这份分析不评判对错，而是帮助你了解自己在面对社会情境时的决策倾向。</p>
+      <div class="modal-btns">
+        <button onclick="closeSubmitModal()">返回检查</button>
+        <button class="confirm" onclick="confirmSubmit()">提交查看</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 结果页 ========== -->
+  <div class="result-wrap" id="resultWrap">
+    <div class="result-hero">
+      <div class="score-number" id="scoreNumber">0</div>
+      <div class="score-label">社会成熟度指数（满分 100）</div>
+      <div class="profile-tag" id="profileTag"></div>
+    </div>
+    <div class="dimensions" id="dimensionsGrid"></div>
+    <div class="result-summary" id="resultSummary"></div>
+    <div class="review-title">逐题行为回顾</div>
+    <div class="result-detail" id="resultDetail"></div>
+    <button class="restart-btn" onclick="restartTest()">重新测试</button>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// 题库：15 道情景题（每题 4 个选项）
+// 每个选项有：
+//   - text: 选项文本
+//   - score: 0-100 综合社会成熟度得分
+//   - dims: [风险评估, 边界意识, 信息验证, 利益洞察] 每维 0-25
+//   - tendency: 行为倾向标签
+//   - read: 结果页展示的解读
+// ============================================================
+
+const TENDENCY = {
+  trust:    { label: '信任驱动', cls: 'tendency-trust',    desc: '倾向于基于情感和熟悉度做出决定，对他人的善意有较高预设' },
+  avoid:    { label: '回避倾向', cls: 'tendency-avoid',    desc: '倾向于回避冲突和正面交涉，可能将问题延后或交给时间解决' },
+  confront: { label: '直接对抗', cls: 'tendency-confront', desc: '倾向于立即正面回应，行动力强但可能缺乏策略缓冲' },
+  conform:  { label: '从众参照', cls: 'tendency-conform',  desc: '倾向于以周围人的行为作为判断依据，相信"多数人的选择"' },
+  strategic:{ label: '策略型',   cls: 'tendency-strategic',desc: '倾向于收集信息、评估多方利益后再行动，注重留痕和自我保护' },
+  defensive:{ label: '过度防御', cls: 'tendency-defensive',desc: '倾向于假设最坏情况，可能因过度防范而错失合理机会或损害关系' }
+};
+
+const questions = [
+  // ====== 第 1 题：大学室友的创业邀请 ======
+  {
+    id: 1,
+    scenario: [
+      "大四下铺的兄弟阿杰，跟你同住了四年，人品没得说——借的钱每次都还，考试帮你占座，你失恋他陪你喝到凌晨。毕业一年后他突然打来电话，声音很兴奋：他辞了工作，自己掏了五万块搭建了一个本地生活服务平台，跑通了前三个月的运营数据。",
+      "他说得条理清晰：市场定位、竞品分析、初期获客策略，一听就是做了功课。他想拉你做联合创始人，全职加入，前六个月不发工资，纯股权。你要是加入就是 30% 的股份。他说已经有两个小商户签了意向书，下个月就能产生第一笔营收。",
+      "你现在在一家稳定的公司拿着月薪八千，工作不讨厌但也没什么激情。"
+    ],
+    options: [
+      {
+        text: "他是信得过的兄弟，趁年轻赌一把。提离职，把所有积蓄预留六个月生活费，剩下的全情投入。",
+        score: 35,
+        dims: [8, 12, 5, 10],
+        tendency: 'trust',
+        read: "这个选择体现了高度的信任和行动力，但风险评估维度偏弱。信任一个人的人品和信任一个商业项目是两回事，前者不能替代后者。没有独立的尽调、没有法律协议框架就全身投入，是很多年轻人第一次创业吃亏的经典路径。"
+      },
+      {
+        text: "认可项目，但提出先利用晚上和周末参与三个月，验证数据真实性和团队配合后再决定是否全职加入。",
+        score: 78,
+        dims: [20, 18, 23, 17],
+        tendency: 'strategic',
+        read: "这是有梯度的参与策略。既保留了信任和机会，又给自己设置了验证周期——三个月足够看清数据真假、判断团队能力和评估市场真实反馈。用可控的时间成本换取信息，是成熟的决策框架。"
+      },
+      {
+        text: "跟他说自己不太适合创业，建议他找有行业经验的人合作。作为朋友可以帮忙转发推广，但不参与经营。",
+        score: 55,
+        dims: [16, 14, 10, 15],
+        tendency: 'avoid',
+        read: "清醒但偏保守。你识别了自己在大事上的犹豫，选择了退一步。这避免了最坏的情况，但也关上了一扇可能的门。关键在于：如果拒绝是基于风险评估而非单纯恐惧，这个选择是理性的。"
+      },
+      {
+        text: "提出自己不出力但可以投两万块钱作为天使支持，签一份简单的借款或投资协议。",
+        score: 48,
+        dims: [10, 12, 16, 10],
+        tendency: 'trust',
+        read: "看似折中，实则模糊。小额度投资如果没有正规的股权协议和退出机制，钱投进去大概率既不是借款也不是投资，而是「人情债」——收不回来碍于情面不好追，朋友关系也可能因此受损。"
+      }
+    ]
+  },
+
+  // ====== 第 2 题：部门的人事暗流 ======
+  {
+    id: 2,
+    scenario: [
+      "你入职某中型公司快四个月了，一直跟着主管张姐做事。张姐业务能力强，但对人比较冷淡，你们之间主要是工作关系。部门里还有一位主管李哥，跟张姐平级，两人都在竞争即将空缺的副总监位置。",
+      "李哥最近对你特别热情——请你吃了三次午饭，在会上两次公开表扬你的方案，还私下跟你说「张姐那套方法太老了，公司领导层其实更看好年轻化的团队，你在她手下发挥不出来」。",
+      "上周五，李哥在茶水间单独跟你说：「我马上要组建新的项目组了，你要是过来，我可以直接给你带项目的权限，比你现在成长快得多。你考虑一下，不过暂时不用跟张姐说。」"
+    ],
+    options: [
+      {
+        text: "李哥这么看重我，而且确实给了我张姐没给的机会。私下答应，等李哥那边确定好了就转过去。",
+        score: 22,
+        dims: [5, 5, 3, 9],
+        tendency: 'trust',
+        read: "你看到的是「机会」，但没看到自己正在成为权力博弈中的棋子。李哥对你的热情恰好发生在竞争副总监的时间窗口，这大概率不是单纯的赏识。一旦站队失败，你在公司可能两面都不讨好。"
+      },
+      {
+        text: "对李哥的赏识表示感谢，但表示目前手上项目还没做完，短期内不考虑变动。同时不主动跟张姐提起这件事。",
+        score: 68,
+        dims: [20, 15, 15, 18],
+        tendency: 'strategic',
+        read: "既不拒绝也不接受，用「手头工作」作为防火墙，给自己留出了观察时间。不主动告知张姐避免了激化矛盾，但如果张姐从别处知道了这件事而你没说，可能反而显得你有二心——后续需要找合适时机适度透露。"
+      },
+      {
+        text: "把李哥的话原原本本告诉张姐，表示坚决站在她这边，让她知道自己忠心。",
+        score: 38,
+        dims: [8, 10, 8, 12],
+        tendency: 'confront',
+        read: "看似忠诚，实则把部门的隐性矛盾引爆了。张姐可能感激你的信息，但也会从此对你多一层防备——你今天能把李哥的话传给我，明天会不会把我的话传给李哥？职场中信息就是权力，随意交出信息源的人难以被信任。"
+      },
+      {
+        text: "找其他老同事侧面了解张姐和李哥的为人、业绩和公司口碑，也观察一下谁是真心做事谁是只会搞关系，再做判断。",
+        score: 82,
+        dims: [21, 20, 24, 17],
+        tendency: 'strategic',
+        read: "在做出任何承诺之前先建立信息优势。了解两人的真实业绩、领导层对他们的态度、以及部门内的口碑分布，这些信息远比李哥的口头赏识更能帮你做出准确判断。四个月的时间还太短，多听多看才是最安全的策略。"
+      }
+    ]
+  },
+
+  // ====== 第 3 题：女友的咖啡店 ======
+  {
+    id: 3,
+    scenario: [
+      "你跟女朋友小玥在一起快一年了，感情稳定。她大专学的是酒店管理，毕业后在连锁咖啡店做了两年店长，对咖啡有一种真正的热爱。最近她特别兴奋地告诉你，她看中的街角那家转让中的小店终于谈下来了——转让费六万，装修设备预估十二万，首批物料两万，总共需要二十万。",
+      "她爸妈愿意出十万，她自己攒了四万，还差六万。她问你：「你能不能借我六万？我给你写借条，算利息也行。店开起来之后我按月还你，最晚两年还清。」",
+      "你工作了两年，存了八万块。你知道她是认真的——她给你看了她自己做的 30 页商业计划书，还有周边三公里内所有咖啡店的客流统计。但你父母一直跟你说「不要跟女朋友有经济往来」。"
+    ],
+    options: [
+      {
+        text: "借。她是认真的，计划也扎实，而且我们感情很好。不帮她我还能帮谁？不写借条，纯粹信任。",
+        score: 20,
+        dims: [3, 5, 5, 7],
+        tendency: 'trust',
+        read: "即便是最亲密的恋爱关系，涉及大额资金时也需要清晰的约定。不写借条意味着这笔钱在法律上和赠与无异。感情好时不觉得有什么，但万一经营不顺、还款困难，或者将来任何原因分手，这笔钱就会变成两人之间最沉重的心理债务。"
+      },
+      {
+        text: "借三万。我信她，但也要给自己留后路。写一个简单的借条，约定分 18 个月还，不设利息。",
+        score: 52,
+        dims: [12, 11, 14, 15],
+        tendency: 'strategic',
+        read: "折中方案。你提供了支持但保留了自己的安全垫。借条的存在不是不信任，而是让双方都清楚这笔钱的边界。但三万不够她启动，她还需要再想办法凑剩下的三万——这个缺口可能变成新的压力来源。"
+      },
+      {
+        text: "不借钱，但提出帮她做三件事：帮她改商业计划书中财务预测的部分、周末去店里帮忙装修、介绍自己认识的设计师朋友帮她省设计费。",
+        score: 70,
+        dims: [18, 17, 20, 15],
+        tendency: 'strategic',
+        read: "用非金钱的方式支持，是边界感和关心之间的平衡。你的技能、人脉和时间也是有价值的投入。六万的资金缺口她可以通过其他方式解决（小贷、亲戚、银行），而你提供的帮助可能在长期更有价值——前提是你们沟通清楚这种方式不是「打折扣的支持」。"
+      },
+      {
+        text: "直接说不借。跟她说我爸妈告诫过我不能跟女朋友有金钱往来，而且开咖啡馆风险太大，建议她也别开了。",
+        score: 25,
+        dims: [10, 15, 2, 8],
+        tendency: 'avoid',
+        read: "搬出父母作为理由，等于把自己放在了一个不用负责的位置，但也放弃了独立判断。伴侣需要的是你作为成年人基于对她计划的评估来回应，而不是转述父母的意见。这个回应方式可能在金钱问题之外，伤害你们之间的平等和信任。"
+      }
+    ]
+  },
+
+  // ====== 第 4 题：邻居的注册地址 ======
+  {
+    id: 4,
+    scenario: [
+      "你在这栋公寓住了一年半，隔壁老陈是你在楼道里最常见的邻居。五十来岁，微胖，总是笑呵呵的，帮你拿过快递、你出差时帮你浇过花，还给你送过两次他老婆包的饺子。他做外贸生意，开一辆开了好几年的凯美瑞，看起来就是个体面本分的小生意人。",
+      "周末老陈敲你门，提了一盒茶叶，寒暄几句后说了正事：他公司需要办一个特殊经营许可，要求注册地址必须是住宅性质。他自己的房子前几年做过一次抵押，工商系统里显示异常办不下来。他想借你的地址登记一下——「就是纸面上的事，不用你真的住那里办公，也不影响你任何东西。每个月我给你两千块钱，就当感谢。」",
+      "你查了一下，你的房子是租的，但你跟房东的合同没有禁止条款。"
+    ],
+    options: [
+      {
+        text: "老陈人这么好，帮个忙无所谓的，两千块还能补贴房租。让他拿资料过来我签个字就行。",
+        score: 12,
+        dims: [2, 3, 3, 4],
+        tendency: 'trust',
+        read: "你把自己的法律地址出借给一家你不了解经营内容的公司。一旦这家公司出现债务纠纷、税务问题、甚至违法经营，工商、税务、法院的文书都会寄到你名下。你是租户，房东如果发现你用他的房子给别人注册公司，理论上可以追究你的违约责任。"
+      },
+      {
+        text: "跟老陈说需要想一想，然后约他下周聊。中间这几天去了解他公司具体做什么业务、查一下工商信息、也问一下做法律的朋友这事的风险。",
+        score: 82,
+        dims: [22, 20, 25, 15],
+        tendency: 'strategic',
+        read: "先不答应也不拒绝，买时间收集信息。查工商可以看到这家公司是否有诉讼、经营异常或行政处罚记录。问法律人士可以明确地址出借的法律风险边界。当你能带着具体信息回来跟老陈谈时，你的态度就基于事实而非感觉了。"
+      },
+      {
+        text: "拒绝。直接跟老陈说这事可能涉及责任问题，自己不太懂怕惹麻烦，建议他找专业代办机构处理注册地址的事。",
+        score: 65,
+        dims: [20, 22, 12, 11],
+        tendency: 'defensive',
+        read: "直接拒绝避免了所有潜在法律风险，是最安全的选择。但你同时也拒绝了进一步了解老陈真实情况的机会——邻里之间的互助关系建立的是一种社会资本，完全切断可能让你失去一个潜在的盟友。"
+      },
+      {
+        text: "答应，但提两个条件：签一份免责协议，写清楚只提供地址不做任何经营相关的事；另外让他先把一年的「感谢费」一次性付清。",
+        score: 28,
+        dims: [6, 8, 10, 4],
+        tendency: 'conform',
+        read: "免责协议听起来专业，但你对一家公司的经营行为没有任何监督能力，协议在法律上能保护你的程度非常有限。而且一次性收一年的钱，如果第三个月公司出问题，你钱已经收了，责任还在你名下，进退两难。"
+      }
+    ]
+  },
+
+  // ====== 第 5 题：老同学的「逆袭」 ======
+  {
+    id: 5,
+    scenario: [
+      "高中学委林悦，你记得她成绩中上、不太说话。毕业后基本没有联系。最近你在社交平台上刷到她，发现她完全变了个人——每天发的都是精致的生活照，高级餐厅、设计师酒店、瑜伽私教。简介写着「生活方式创业者 / 帮助 100+ 年轻人实现月入五位数」。",
+      "她主动私信你了。寒暄了高中往事，然后自然地把话题引到现在：「你知道吗，我以前在银行做柜员，累死累活月薪五千。现在的体系完全改变了我的生活。我看你特别有潜力才私信的——我团队里正好缺一个深圳地区的负责人，你有兴趣吗？我们是正规品牌，商务部备案的。你要是想了解一下，我发你一个线上分享会的链接，听完了你再决定。」",
+      "你点进她的朋友圈，第一条是三张跟豪车的合影，第二条是「恭喜团队成员小张本月收入突破三万」，第三条是一段在巴厘岛的视频配文「自由不是想做什么就做什么，而是不想做什么就可以不做什么」。"
+    ],
+    options: [
+      {
+        text: "林悦是我同学，她没必要骗我。先听听分享会，如果是真的就加入。反正现在的工作也没前途。",
+        score: 8,
+        dims: [1, 2, 3, 2],
+        tendency: 'trust',
+        read: "你判断的依据是「同学不会骗同学」，但高中毕业后的几年里人会发生多大的变化你无从知晓。朋友圈的奢华展示、「正规品牌备案」、「地区负责人」这些词汇都是标准获客话术。分享会上你会听到更多精心设计的故事，而你可能正是他们本月要完成的「拉新指标」。"
+      },
+      {
+        text: "好奇但谨慎。先不答应任何事，去企查查搜她提到的品牌公司、查商务部备案是否属实、在知乎和黑猫投诉上搜公司和品牌名看口碑。",
+        score: 85,
+        dims: [23, 18, 25, 19],
+        tendency: 'strategic',
+        read: "用公开信息做交叉验证是最低成本的真相探查。工商信息会告诉你公司是否有异常记录，投诉平台会展示真实用户的经历。如果这些渠道查不到或全是负面信息，那就用事实打消了情感上的那一点点「万一呢」。不依赖个人判断，依赖数据。"
+      },
+      {
+        text: "直接不回私信，把她设为「不看她」。直觉告诉我这种到处拉人的模式不对劲。",
+        score: 55,
+        dims: [18, 20, 7, 10],
+        tendency: 'defensive',
+        read: "直觉是一个有用的预警信号，你的警觉帮你避开了潜在的坑。但完全不去验证意味着你永远不知道你避开的是什么——下次换个包装、换个话术，你还能识别吗？把直觉当成起点而不是终点，会更有价值。"
+      },
+      {
+        text: "回复她：挺感兴趣的，但我有几个问题——你们的产品是什么？收入结构是怎么构成的？需要自己先买产品吗？如果她说清楚了我就考虑。",
+        score: 30,
+        dims: [7, 8, 10, 5],
+        tendency: 'conform',
+        read: "你以为在「问清楚」，但对方有标准话术回答每一个问题。一个经过训练的直销/传销人员可以在三分钟内打消你的所有疑虑。真正需要回答的问题不是你问她的，而是你自己查到的——独立信息源远比对方的解释可靠。"
+      }
+    ]
+  },
+
+  // ====== 第 6 题：亲戚的担保请求 ======
+  {
+    id: 6,
+    scenario: [
+      "你妈给你打电话：「你小舅要买一套房子，首付凑够了但是银行贷款需要担保人。你大舅已经帮他担保了一部分，还差一个人。你现在工作稳定、有社保，银行那边说只要你在担保书上签个字就行。你小舅说了，不会影响你任何事的，他每个月自己还款，你只是走个形式。」",
+      "你小舅确实是个靠谱的人——你小时候爸妈忙，是他接送了你两年上下学。他在体制内上班，收入稳定，不是那种乱来的人。你妈最后加了一句：「你是家里面唯一能帮上忙的人了，你舅舅对你那么好，这事你得帮。」"
+    ],
+    options: [
+      {
+        text: "舅舅对我有恩，这个忙必须帮。而且我妈都开口了，不帮说不过去。签。",
+        score: 10,
+        dims: [2, 2, 3, 3],
+        tendency: 'trust',
+        read: "担保在法律上不是「走形式」，而是你承担了连带还款责任。如果舅舅因为任何原因断供——失业、生病、意外——银行会直接找你追偿，你的征信也会受影响。亲情恩情和法律责任是两套不同的系统，不能用前者的逻辑处理后者。"
+      },
+      {
+        text: "跟舅舅和妈妈坦诚沟通：我愿意帮忙，但需要先了解担保的具体法律后果、贷款金额和期限、以及舅舅的收入覆盖情况。同时问如果实在需要担保，有没有其他替代方案。",
+        score: 80,
+        dims: [21, 18, 24, 17],
+        tendency: 'strategic',
+        read: "你没有直接拒绝（维护亲情），但你要求先了解所有事实再做决定。了解担保金额和舅舅的收入覆盖率是理性判断的前提。主动寻找替代方案（比如舅舅是否可以买更便宜的房子、是否可以用其他资产抵押）也是负责任的表现。"
+      },
+      {
+        text: "拒绝。跟妈妈说担保责任太重，我承受不起。建议舅舅找其他亲戚或者换一家不需要担保的银行。",
+        score: 65,
+        dims: [22, 20, 12, 11],
+        tendency: 'defensive',
+        read: "这是一个艰难的但清醒的选择。你用理性的风险评估保护了自己的财务安全，代价是可能面临家庭内部的情绪压力。这种情况下表达方式很重要——重点放在「我承受不起」而非「我不信任舅舅」，把责任放在自己身上而不是对方身上。"
+      },
+      {
+        text: "不好拒绝，但折中一下：担保可以，但要求舅舅买一份贷款保险，受益人写我，万一出问题保险理赔先覆盖。",
+        score: 38,
+        dims: [9, 10, 14, 5],
+        tendency: 'conform',
+        read: "表面上看起来有保障意识，实际上贷款保险通常覆盖的范围很有限，而且理赔流程复杂。你仍然在担保书上签了字，法律责任一分不少。这种「折中」更像是在心理上让自己好受一点，而不是真正降低了风险。"
+      }
+    ]
+  },
+
+  // ====== 第 7 题：同事的「顺手帮忙」 ======
+  {
+    id: 7,
+    scenario: [
+      "你的工位在部门老员工强哥旁边。强哥在公司六年了，跟谁都熟，老板也信任他。入职头两个月他对你挺照顾，给你讲过内部系统的用法，分享过公司附近好吃的外卖。",
+      "最近一个月，他开始频繁「顺手」把一些工作推给你：汇总一下这几个表的数、帮我把这个 PPT 调下格式、客户那边你帮我跟一下。每次都说得很亲切：「年轻人多锻炼锻炼没坏处」「我看你做事靠谱才找你的」。",
+      "你算了算，这一个月你额外花在他身上大概有 20 个小时——相当于每周多做半天。你自己的活也开始有点赶了。你的直属领导王姐不清楚这些事，因为强哥每次在公共场合都会特别大声地夸你，让人感觉他在「带」你。"
+    ],
+    options: [
+      {
+        text: "他是前辈，愿意带我说明看得起我。多干点活就当积累经验了，不要计较。继续帮他。",
+        score: 15,
+        dims: [3, 3, 4, 5],
+        tendency: 'trust',
+        read: "「锻炼」和「被利用」之间有一条线：锻炼是你能学到东西、有成长、或者成果能体现在你的绩效中。如果你只是在做他不想做的重复劳动，而功劳和能见度都属于他，那这不是锻炼。你的时间和精力是公司付钱买的，不是送给同事的礼物。"
+      },
+      {
+        text: "下次他再找你时，问清楚这个活跟我的工作有什么关系、成果归属谁。然后跟他说我手头有王姐交代的事，你这个急的话我跟王姐说一声排个优先级。",
+        score: 85,
+        dims: [20, 22, 22, 21],
+        tendency: 'strategic',
+        read: "你没有直接冲突，但设置了两个关键防线：第一，要求明确工作归属和成果认可。第二，搬出直属领导作为优先级判断的依据。这不仅保护了自己的时间，也巧妙地让王姐知道了这件事——信息透明化是最优雅的反制。"
+      },
+      {
+        text: "下次直接拒绝：「强哥我自己的活也干不完，你找别人吧。」态度明确，不拖泥带水。",
+        score: 40,
+        dims: [12, 18, 5, 5],
+        tendency: 'confront',
+        read: "直接拒绝展现了边界感，但方式偏硬。强哥在公司六年的人脉基础可能让你在无形中树敌——他在老板面前可能不会说你「拒绝帮忙」，而是说你「不愿意合作」「太计较」。职场中被贴上这样的标签对你更不利。"
+      },
+      {
+        text: "默默接受，但开始详细记录他每次找我做了什么、花了多少时间。等攒够两个月的数据整理成表格，找机会单独给王姐看。",
+        score: 55,
+        dims: [14, 12, 18, 11],
+        tendency: 'strategic',
+        read: "数据留痕是对的，但「攒两个月再翻牌」风险很高——这两个月你仍然在超额付出，而且当你拿出表格时，可能被视为「记小账」「不会当面沟通」。更好的策略是边记录边沟通，而不是一次性引爆。"
+      }
+    ]
+  },
+
+  // ====== 第 8 题：租房的「完美房源」 ======
+  {
+    id: 8,
+    scenario: [
+      "你找房子找了两周了。今天在租房 App 上刷到一个房源：步行到地铁五分钟，精装修一居室，照片看起来极好，月租比同小区均价低了将近 40%。简介写着「个人房东直租，无中介费」。",
+      "你打电话过去，接电话的是一个声音很温和的中年男人。他说自己在外地做生意，这套房子本来是买给女儿上学用的，女儿考上了外地的学校用不上了，所以便宜租掉——不为赚钱，就是不想房子空着。",
+      "他说已经有好几个人在问了，「你如果真心想租，先付 800 块定金，我把房子从平台上撤下来留给你。明天我让我弟弟带你看房，不满意定金随时退。」他给了你一个个人支付宝账号。"
+    ],
+    options: [
+      {
+        text: "房东听起来很真诚，而且理由也合理。800 块不多，先定下来免得错过好房子。立刻转钱。",
+        score: 5,
+        dims: [1, 1, 2, 1],
+        tendency: 'trust',
+        read: "在没有亲眼见过房子、没有确认对方是不是真正的房东之前，转任何钱都是危险的。他说「随时退」，但钱在你口袋里时你说了算，钱进了别人口袋后对方说了算。租房市场上「人在外地」「女儿上学用不上」「很多人抢」是最经典的三件套话术。"
+      },
+      {
+        text: "不付定金。坚持先实地看房，要求对方提供房产证或购房合同照片来看看名字是否跟支付宝实名一致。同时搜一下这个小区同样户型在多个平台上的报价作为参考。",
+        score: 88,
+        dims: [24, 21, 25, 18],
+        tendency: 'strategic',
+        read: "三重验证：实地验证房源存在、证件验证房东身份、比价验证报价合理性。任何一个环节对不上就可以判断风险。低于市场价 40% 本身就是最强的信号——在充分竞争的租房市场上，价格不会因为你刚好运气好就偏离均值这么多。"
+      },
+      {
+        text: "800 块风险不大，但我先加他微信视频看房，视频里看到房子是真的就转定金。",
+        score: 25,
+        dims: [8, 6, 9, 2],
+        tendency: 'conform',
+        read: "视频看房只能证明「有人能进入这间房子」，不能证明「这个人是房子的主人」。很多短租骗子会先租一个 Airbnb 拍视频，然后在线上收取多个人的定金后消失。视频不能替代见面，也不能替代证件核验。"
+      },
+      {
+        text: "直觉不太好，放弃这个房源，老老实实找正常价格的房子。不去赌这个概率。",
+        score: 55,
+        dims: [18, 15, 8, 12],
+        tendency: 'defensive',
+        read: "直觉的预警让你避开了明确的坑。放弃一个可疑的机会比踩进坑里要安全得多。不过如果每次遇到异常信号都直接放弃而不是去验证，你可能会错过一些真正的好机会——比如急租降价确实存在但需要验证的情况。"
+      }
+    ]
+  },
+
+  // ====== 第 9 题：老板的特殊安排 ======
+  {
+    id: 9,
+    scenario: [
+      "周一早上，你的直属领导张总把你叫进办公室。他看起来有点疲惫，说话声音比平时低：「小林，帮我处理个事。我手上有张两万二的餐饮发票，是上个月跟几个重要客户吃饭开的。你用你的名义走报销流程，财务那边不会查太细。回头钱到了你转给我。」",
+      "他看你没说话，又补了一句：「我知道这不太常规，但大家都这么操作。你看老周他们组的经费不也都这么处理吗。我保证不出问题。而且下个月调薪的时候我会优先考虑你。」",
+      "你入职快一年了，张总一直算是讲道理的领导，这是第一次让你碰这种事。公司财务制度确实写了报销必须真实合规，但你也隐约知道有些部门是存在类似操作的。"
+    ],
+    options: [
+      {
+        text: "老板都开口了，不帮太不懂事了。而且他说会优先考虑调薪，这是信任我的表现。帮他走流程。",
+        score: 8,
+        dims: [1, 2, 2, 3],
+        tendency: 'trust',
+        read: "财务违规一旦被查出，发票上签的你的名字，报销款打到了你的账户——所有证据链都指向你。张总的「保证」在法律和制度面前没有分量。调薪的承诺没有落在任何书面上，而违规报销的痕迹却永远留在了系统里。他用你的职业安全换他的便利，这不是信任。"
+      },
+      {
+        text: "跟张总说：张总，这个我真的不太敢。我查了一下公司财务规定，虚假报销如果被发现是要记过的。您看这样行不行，这笔费用我们换个合规的方式处理，我帮您想想别的办法。",
+        score: 75,
+        dims: [18, 17, 22, 18],
+        tendency: 'strategic',
+        read: "拒绝但留下台阶。你没有说「你这样做不对」，而是说「我不敢做」，把压力转移到制度和自己的恐惧上而非领导的道德上。同时主动提出帮他想合规的替代方案，表明你站在他这边只是不能走这条路。这种方式在保住自己的同时最小化了关系损伤。"
+      },
+      {
+        text: "直接拒绝：张总对不起，这事违反财务规定，我不能做。如果他坚持就去找 HR 或者合规部门反映。",
+        score: 45,
+        dims: [15, 20, 5, 5],
+        tendency: 'confront',
+        read: "原则上是正确的，但方式上可能代价很高。在没有建立同盟或证据的情况下直接挑战上级，你可能在问题还没爆出来之前就被边缘化了。举报之前至少先确保自己有书面证据，以及想清楚最坏情况自己能不能承受。"
+      },
+      {
+        text: "先答应下来，但跟他说卡里最近钱不够，需要等发工资才有钱转给他。利用这个时间差跟公司信任的老同事私下聊一下，了解张总到底可不可靠、这种操作在公司是不是普遍现象。",
+        score: 42,
+        dims: [10, 9, 15, 8],
+        tendency: 'avoid',
+        read: "拖延战术本身没问题，但你已经在口头上答应了，这变成了一个你将来很难否认的事实。而且找同事私下讨论领导的不合规行为，等于把自己的把柄同时交到了同事手里——你怎么确定这个同事不会把话传出去？"
+      }
+    ]
+  },
+
+  // ====== 第 10 题：朋友的紧急借款 ======
+  {
+    id: 10,
+    scenario: [
+      "周五晚上十点半，大学同班好友小杰突然打来电话。他声音很急：「兄弟，真不好意思这么晚找你。我妈刚打电话来，说我爸突发心梗正在医院抢救，急需三万块手术押金，明天早上八点前要交。我家那边小县城银行下班早，我妈取不到钱，我这边的钱都在定期理财里面要三天才能赎回来。你能不能先借我三万，我下周理财一到账就还你。」",
+      "小杰大学四年是你最好的朋友之一，一起熬夜复习、一起穷游、毕业时抱头痛哭。工作后虽然在不同城市，但每个月还会聊几次。他在一家大厂做程序员，收入不错，不是那种经常借钱的人。他说话时的焦虑你隔着电话都能感觉到。",
+      "你卡里有五万多，是他知道的大概数字。"
+    ],
+    options: [
+      {
+        text: "马上转。人命关天，我爸生病时我也经历过这种着急。不做任何验证，三分钟内转账。",
+        score: 18,
+        dims: [2, 3, 3, 10],
+        tendency: 'trust',
+        read: "共情力在这里反而成了弱点。「父亲病危急需手术押金」是所有电诈剧本里最高频的开场白之一，因为它利用的就是人在紧急情况下停止理性思考的本能。你甚至不能确定电话那头是不是真的小杰——AI 换声技术已经非常成熟，盗用社交账号后模仿本人声音借钱是常见手法。"
+      },
+      {
+        text: "先转五千应急，跟他说这是我现在能凑出来的全部现金。然后等白天再帮他想想其他办法。",
+        score: 38,
+        dims: [10, 8, 12, 8],
+        tendency: 'conform',
+        read: "降低了单次损失，但本质上还是基于同样的信任逻辑。如果这是诈骗，五千块一样打了水漂。如果这真的是小杰急需，五千不够交押金，你的帮助效果大打折扣——你既没验证真伪，也没真正解决问题。"
+      },
+      {
+        text: "在电话里跟他说：别急，我马上想办法。挂了电话之后立刻做三件事——用另一个渠道联系小杰确认（比如微信文字或另一个号码）、问他爸在哪个医院然后上网查医院电话打过去核实情况、同时问他需要什么转账方式看账号是否是他本人实名。",
+        score: 88,
+        dims: [24, 20, 25, 19],
+        tendency: 'strategic',
+        read: "你保持了同理心（没有冷漠拒绝），但同时启动了独立验证流程。换渠道联系可以排除社交账号被盗的可能；医院核实可以排除故事完全虚构的可能；账户实名验证是最后一道防线。这三步做完最多十分钟，但十分钟的信息增量足以让你做出准确判断。"
+      },
+      {
+        text: "跟他说抱歉，我自己钱也不多了，建议他打个电话给公司 HR 或者找其他共同朋友帮忙。不借。",
+        score: 45,
+        dims: [16, 18, 5, 6],
+        tendency: 'defensive',
+        read: "风险为零，但也放弃了在朋友真正需要时给予帮助的可能。如果小杰的求助是真的，这个拒绝会在你们的关系中留下印记。如果你是因为不信任而不借，那坦诚表达顾虑比找借口更尊重这段友谊。"
+      }
+    ]
+  },
+
+  // ====== 第 11 题：合租室友的边界侵蚀 ======
+  {
+    id: 11,
+    scenario: [
+      "你和一个同龄女生（或男生，取决于你的性别）合租一套两居室快一年了。室友小唐为人随和，公共区域卫生轮流做，水电费按时转账，总体相处愉快。",
+      "三个月前，小唐交了男朋友。从那时开始，她男朋友几乎每天都来了——最初是晚上来，后来周末全天在，最近一个月已经发展到每周大概有四天在这里过夜。他在的时候会用厨房、洗澡、看电视，客厅基本成了他们的二人空间。小唐从来没有正式跟你提过这件事，一切都是自然发生的。",
+      "上个月水电费多了一截，平摊下来你每月多付了一百多。你有时候加班回家想安静待会儿，发现客厅里他们俩在追剧，你只能回自己房间。你心里不太舒服，但又觉得人家谈恋爱很正常，说出来显得自己小气。"
+    ],
+    options: [
+      {
+        text: "算了，人家谈恋爱好事，我忍一忍。反正房子年底到期，到时候我自己搬走换个地方。",
+        score: 12,
+        dims: [2, 2, 3, 5],
+        tendency: 'avoid',
+        read: "你选择了牺牲自己的权益来避免冲突，最后的解决方案是「我走」。这种模式如果延续到未来的伴侣关系、职场关系、商业合作中，你会反复成为那个默默吃亏然后退出的人。而且你本来有权利，为什么要搬家的是你？"
+      },
+      {
+        text: "找一个只有你们俩在的时候，以轻松的语气开场：「小唐，我想跟你聊聊最近咱们房子的事。你男朋友常来我完全理解，不过现在基本每周大半时间都有三个人在用，水电费也涨了。咱们要不要明确一下规则？比如每周不超过几晚，或者水电按人头算？」",
+        score: 85,
+        dims: [18, 24, 16, 27],
+        tendency: 'strategic',
+        read: "你没有指责她，而是把问题定义为「需要一起商量规则」。先表达理解（「完全理解」），再说客观事实（频率、水电费），最后提出具体方案。这样把讨论从「你男朋友来太多次了」转化为「我们该如何调整合租规则」，避免了对立。这是成熟的边界沟通。"
+      },
+      {
+        text: "在小唐不在的时候跟她男朋友单独说：「哥们，你来得有点频繁了，这毕竟也是我的房子，能不能注意一下？」",
+        score: 20,
+        dims: [5, 6, 4, 5],
+        tendency: 'confront',
+        read: "绕过室友直接跟第三方交涉，这犯了一个社交规则上的错误：你的关系是小唐而不是她男朋友。她男朋友没有义务对你负责，而且他大概率会转述给小唐，但转述的内容和语气不在你控制范围内。这栋房子里的问题只应该在两个签约租户之间解决。"
+      },
+      {
+        text: "开始默默在公共区域制造不舒适——他们看电视时你大声打电话、洗澡时你敲门说要上厕所、冰箱里只放自己东西。让他们自己感受到不方便然后少来。",
+        score: 5,
+        dims: [2, 3, 1, -1],
+        tendency: 'confront',
+        read: "被动攻击是最消耗关系的方式。你不会解决任何问题，但会让居住氛围变得极度紧张。对方看不懂你的意图（或者假装看不懂），你每天生活在不爽中。三个月后你不仅房子住得不舒服，可能还背上了一个「难相处」的名声。"
+      }
+    ]
+  },
+
+  // ====== 第 12 题：高端酒会上的投资家 ======
+  {
+    id: 12,
+    scenario: [
+      "同事小周带你去参加一个行业交流酒会。现场大概四五十人，氛围不错，红酒、甜点、西装革履的人们端着酒杯聊天。小周把你引荐给一位四十来岁的男士，姓冯，名片上的头衔是某投资管理公司的合伙人。",
+      "冯总跟你聊了二十分钟，问了你的背景、兴趣爱好、对未来的规划。他说话让人很舒服——偶尔讲几个行业的段子，问问你的看法，让你感觉自己被认真倾听。聊到后半段，他从手机里调出一张图表：「我们团队最近在做一个新能源供应链的项目，已经过了天使轮，目前在做 Pre-A。上一轮估值两千万，这一轮我们内部有一些额度可以开放给个人投资者，三万起投，预期 18 个月回报率 200% 到 300%。」",
+      "他补充说：「我不是在推销。只是觉得你思路清楚，是个聪明人。这个项目我们一般不对外，都是朋友之间。」他给了你一张制作精美的项目介绍折页，上面有公司名字、团队照片和一些数据图表。"
+    ],
+    options: [
+      {
+        text: "冯总这个级别的人，不太可能在这种场合搞什么猫腻。三万块也不是大钱，投了就当交个朋友，万一赚了呢。",
+        score: 10,
+        dims: [1, 2, 3, 4],
+        tendency: 'trust',
+        read: "「朋友之间」「不对外」「觉得你聪明」——这是一个社交工程式的销售闭环。真正的专业投资人不靠酒会偶遇来募资。名片上的头衔可自行印刷，折页上的数据无法验证。三万块不是大钱，但全国有无数人和你一样觉得「三万块不是大钱」，这些小额加起来就是他们的商业模式。"
+      },
+      {
+        text: "礼貌收下折页，表示会认真考虑。回去后：查这家公司工商信息和融资历史、在投资圈朋友中打听这个冯总的口碑、搜索项目提到的供应链上下游公司是否真实存在。在充分验证之前不投任何钱。",
+        score: 90,
+        dims: [24, 20, 25, 21],
+        tendency: 'strategic',
+        read: "你把这件事从一个「社交场合的偶遇」转回它的本质——一个需要独立验证的商业提案。查工商、查团队、查上下游，这三个方向几乎可以覆盖大多数虚假项目的漏洞。真正好的投资机会不会因为你花了三天做尽调就飞走的。"
+      },
+      {
+        text: "加冯总微信，说想先了解更详细的商业计划书和财务报表。如果他推三阻四不给详细资料，那就说明有问题。",
+        score: 45,
+        dims: [12, 10, 15, 8],
+        tendency: 'strategic',
+        read: "要求更多资料是对的，但你在用对方提供的信息验证对方说的话。真正精致的骗局有全套伪造的 BP 和报表，看起来比真的还真。你需要的不只是他的资料，而是独立于他的第三方信息——工商、法院、投资圈口碑。"
+      },
+      {
+        text: "在酒会上直接婉拒：「谢谢冯总，我目前资金另有安排。」不拿折页，不加微信。不在这种场合做任何投资。",
+        score: 55,
+        dims: [20, 18, 5, 12],
+        tendency: 'defensive',
+        read: "你的边界感保护了你，一刀切避免了所有风险。但如果你对所有偶遇的机会都采取零接触策略，你也可能错过真正的资源——酒会本身是合法的人脉拓展渠道，不是所有的名片背后都有骗局。"
+      }
+    ]
+  },
+
+  // ====== 第 13 题：健身房的免费体测 ======
+  {
+    id: 13,
+    scenario: [
+      "你路过一家新开的健身房，门口的小伙子热情招呼：「新店开业，免费体测，了解一下自己的体脂率、基础代谢、身体年龄。」你没多想就进去了。",
+      "体测三分钟做完，私教拿着打印出来的报告，表情变得严肃：「你的体脂率偏高，基础代谢偏低，而且有轻微的脊柱侧弯倾向，如果不及时纠正，五年后腰椎可能会有问题。」他翻出一本相册，里面是各种严重脊柱弯曲的照片。",
+      "「你别紧张，」他语气温和下来，「你现在干预还来得及。我们刚好有一个新会员优惠套餐，十二节康复私教课，原价 4800，今天体测客户只要 1980。你要是今天就定，我再送你两节课。你可以分期付，花呗、信用卡都行。」",
+      "他说话的时候一直在观察你的表情，旁边另一个教练也开始收拾器械，场地里突然安静得只剩下你们两个人。"
+    ],
+    options: [
+      {
+        text: "他说得挺专业的，而且脊柱问题听起来很严重。1980 也不贵，就当投资健康了。今天就买。",
+        score: 8,
+        dims: [1, 2, 2, 3],
+        tendency: 'trust',
+        read: "你已经进入了一个精心设计的销售漏斗：免费体测是整个流程的入口，「发现问题」是制造焦虑，「限时优惠」是催促决策，「分期付款」是降低支付门槛。教练的诊断是否具备医学资质？体测设备是否经过校准？这些你全都不知道。他卖的不是健康，是你当下的恐惧。"
+      },
+      {
+        text: "跟教练说谢谢，报告我收下了。回去后自己先查资料了解脊柱侧弯的判断标准、体脂率的正常范围、以及这家健身房的工商资质和用户评价。如果真的需要康复训练，去医院康复科让医生评估后再决定。",
+        score: 90,
+        dims: [25, 22, 25, 18],
+        tendency: 'strategic',
+        read: "你把「健康问题」和「消费决策」剥离开了。健康问题交给医疗机构判断，消费决策基于多方信息独立做出。健身房教练没有诊断资格，他们的「检测结果」本质上是一个销售工具。如果真的有健康问题，医院康复科的治疗方案既专业又便宜。"
+      },
+      {
+        text: "跟教练说今天没带钱，加个微信回头再说。出门后立刻感觉不对，直接不理了。",
+        score: 40,
+        dims: [12, 10, 8, 10],
+        tendency: 'avoid',
+        read: "你用回避保护了自己，但「今天没带钱」给了对方继续跟进的理由——他会在微信上追着你，用更多的话术和优惠来围堵你。如果你确定不买，直接说清楚比拖着更能切断后续干扰。"
+      },
+      {
+        text: "跟教练说你这套话术我听过，我不会在免费体验之后就冲动消费。然后直接走人。",
+        score: 35,
+        dims: [8, 15, 5, 7],
+        tendency: 'confront',
+        read: "拆穿对方可以获得一时的心理优越感，但无助于提升自己的判断力。下次换一个场景、换一套话术——不是健身房，可能是美容院、可能是金融产品、可能是培训课程——你还能识别吗？需要养成的不是「怼回去」的能力，而是「慢下来验证」的习惯。"
+      }
+    ]
+  },
+
+  // ====== 第 14 题：猎头的「从天而降」 ======
+  {
+    id: 14,
+    scenario: [
+      "周三下午，你在招聘软件上收到一条私信：「您好，我是猎头顾问陈馨。看到您的背景非常匹配我们目前在招的一个岗位——某知名互联网公司高级岗位，薪资范围 25k-35k，14 薪，全额公积金。方便加微信详细聊一下吗？」",
+      "你现在月薪 12k，一年半经验。你点进她的主页，有头像、有认证、历史发布过一些职位信息，看起来是个正常猎头。你加了微信，她发来一份详细的 JD，确实是某大厂的岗位，jd 措辞专业。",
+      "语音聊了二十分钟后，她话锋一转：「不过说实话，以你现在的简历背景直接投这个岗位，通过率不太高。我们团队有一个简历优化的增值服务，资深 HR 帮你重新包装项目经验，做过的人面试邀约率提升 60%。费用是 880，可以先付一半，拿到面试通知再付另一半。」"
+    ],
+    options: [
+      {
+        text: "大厂的岗位、专业的猎头、详细的 JD，看起来都是真的。880 块投资一下简历也不贵，如果真能进大厂就赚大了。付了。",
+        score: 12,
+        dims: [2, 3, 4, 3],
+        tendency: 'trust',
+        read: "高薪岗位可能是真实存在的（猎头抓取了大厂的公开 JD），但「你的背景非常匹配」和「通过率不高需要优化简历」之间的矛盾才是关键。先告诉你非常适合，再告诉你其实不够——这个心理落差就是付费环节的设计。真正靠成单赚钱的猎头不会向候选人收钱。"
+      },
+      {
+        text: "跟她说简历我自己优化就行。然后直接去那家大厂的官网招聘页面搜这个岗位，如果有，直接自己投。同时搜一下这位猎头所在公司的口碑。",
+        score: 86,
+        dims: [22, 18, 24, 22],
+        tendency: 'strategic',
+        read: "你绕过了中介直接接触源头。如果大厂官网确实有这个岗位，你直接投递不仅免费，而且简历会进入官方系统（比猎头渠道更可控）。查猎头公司口碑也很关键——如果搜索结果是大量「收了钱没下文」的投诉，那你验证了自己省下了 880 块。"
+      },
+      {
+        text: "跟她说：如果我的背景真的匹配，你应该靠我入职后的佣金赚钱，而不是收我的简历费。如果收钱就说明这个岗位可能不存在。然后结束对话。",
+        score: 45,
+        dims: [10, 15, 8, 12],
+        tendency: 'confront',
+        read: "你的逻辑是对的，但你不必把洞察变成对抗。这个猎头可能只是众多做这个模式的人之一，拆穿她不会改变行业现状，但可能浪费你的时间。更高效的做法是默默离开，用行动（自己去官网投）保护自己。"
+      },
+      {
+        text: "觉得是个机会但不想花钱。问她能不能先不付费、只用她的免费渠道帮我内推。如果她说不行就算了。",
+        score: 40,
+        dims: [8, 10, 12, 10],
+        tendency: 'conform',
+        read: "你在尝试从对方的框架里讨价还价，但对方的商业模式就是靠简历优化费盈利，不是靠成单佣金。在这种情况下，「免费内推」大概率不会发生——或者她发一个假的「已推荐」截图给你，然后告诉你在简历筛选环节被刷了，再劝你买优化服务。"
+      }
+    ]
+  },
+
+  // ====== 第 15 题：团建中的酒后「真心话」 ======
+  {
+    id: 15,
+    scenario: [
+      "公司季度团建，烧烤加啤酒。气氛很好，大家喝得都有点上头。你的直属领导刘经理今天格外放松，平时话不多的他喝了三瓶啤酒后开始拉着你聊天。",
+      "他压低声音跟你说：「小林，你在我团队里我最看好。但是你也要有心理准备——公司最近可能要调整架构，你们这个方向上面其实不太看好。我是替你着急才跟你说的，这事你别说出去，说了就是害我。」",
+      "他沉默了几秒，又说：「不过也不是没机会。我自己可能要调去新成立的商业拓展部了，那边预算多、项目新。我要是过去了，想带一个人。你要是愿意跟我，我可以举荐你。」",
+      "你入职不满一年，第一次听到公司可能要变动。酒过三巡，旁边同事们在大声唱歌，没人注意你们在说什么。"
+    ],
+    options: [
+      {
+        text: "领导这么信任我，酒后吐真言，这事一定是真的。回去就开始物色内部转岗机会，同时主动跟刘经理表态愿意跟他走。",
+        score: 18,
+        dims: [3, 4, 4, 7],
+        tendency: 'trust',
+        read: "团建喝酒是一个精心设计的低防备场景。「架构调整」「上面不看好」「我替你着急」这三句话的组合创造了一个经典的同盟叙事——你和他 vs 公司。但一个关键问题你没有问：为什么一个经理级别的人在烧烤摊上跟你透露公司机密？这本身是否合理？"
+      },
+      {
+        text: "认真听，不表态。跟刘经理说谢谢关照，我好好考虑。接下来几周默默观察公司内部的信号——有没有正式的架构调整通知、其他部门有没有在招人、高层的讲话和邮件有没有暗示变化。在外部信息验证之前不做任何决定。",
+        score: 88,
+        dims: [23, 20, 25, 20],
+        tendency: 'strategic',
+        read: "你区分了「信息」和「决策」。刘经理给了你一条信息，但你不会基于单一信息源做出职业决定。内部信号的交叉验证（官方通知、招聘动态、高层表态）会帮你在几周内判断这条信息的真假和严重程度。在那之前，「谢谢关照我好好考虑」是最安全的话。"
+      },
+      {
+        text: "回去后找了公司里关系比较好的另外一个老同事，私下问他知不知道公司是不是真的要调整架构。",
+        score: 32,
+        dims: [6, 7, 12, 7],
+        tendency: 'conform',
+        read: "你试图验证，但验证的方式有一个致命问题：你把刘经理对你说的话传播给了第三个人。不管这个同事靠不靠谱，你已经违背了「别说出去」的约定。如果这话传到刘经理耳朵里，你不仅失去了他的信任，还可能被认为是不能保守秘密的人。信息验证要用公开渠道，不要用私下传播。"
+      },
+      {
+        text: "觉得领导说的话半真半假——可能架构调整是真的，但「带你去新部门」不一定靠谱。心态上做好两手准备，但不做任何外部动作，该干嘛干嘛。",
+        score: 60,
+        dims: [18, 14, 10, 18],
+        tendency: 'strategic',
+        read: "你的判断可能是对的——真信息（公司变动）和假承诺（带你走）经常被捆绑在一起传递。不做外部动作暂时安全，但如果架构调整真的发生而你没有任何准备，你可能陷入被动。至少应该确保自己的简历是更新的、对市场上的机会有大体了解。信息可以慢慢验证，备选方案不要等确认了才开始准备。"
+      }
+    ]
+  }
+];
+
+// ============================================================
+// 全局状态
+// ============================================================
+let currentQ = 0;
+let choices = {}; // { questionId: optionIndex }
+let finished = false;
+
+// ============================================================
+// UI
+// ============================================================
+function startTest() {
+  currentQ = 0;
+  choices = {};
+  finished = false;
+  hide('cover');
+  showBlock('progressWrap');
+  showBlock('navBtns');
+  hide('resultWrap');
+  renderQuestions();
+  showQ(0);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions');
+  container.innerHTML = questions.map((q, qi) => {
+    const paras = q.scenario.map(p => `<p>${p}</p>`).join('\n');
+    const opts = q.options.map((o, oi) => `
+      <div class="option" data-q="${qi}" data-o="${oi}" onclick="pick(${qi},${oi})">
+        <div class="radio"></div>
+        <div class="opt-label">${'ABCD'[oi]}</div>
+        <div class="opt-text">${o.text}</div>
+      </div>
+    `).join('');
+    return `
+      <div class="question-card" id="qcard-${qi}">
+        <div class="q-index">第 ${qi+1} 题</div>
+        <div class="q-label">请选择最接近你真实反应的一项</div>
+        <div class="scenario">${paras}</div>
+        <div class="options">${opts}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function showQ(idx) {
+  document.querySelectorAll('.question-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('qcard-' + idx);
+  if (card) card.classList.add('active');
+
+  const qid = questions[idx].id;
+  if (choices[qid] !== undefined) {
+    const opts = document.querySelectorAll('#qcard-' + idx + ' .option');
+    opts.forEach(o => o.classList.remove('selected'));
+    opts[choices[qid]].classList.add('selected');
+  }
+
+  currentQ = idx;
+  updateProgressUI();
+  updateNavUI();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function pick(qi, oi) {
+  if (finished) return;
+  choices[questions[qi].id] = oi;
+  const opts = document.querySelectorAll('#qcard-' + qi + ' .option');
+  opts.forEach(o => o.classList.remove('selected'));
+  opts[oi].classList.add('selected');
+  updateNavUI();
+}
+
+function updateProgressUI() {
+  const answered = Object.keys(choices).length;
+  const total = questions.length;
+  const pct = Math.round((answered / total) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `第 ${currentQ + 1} / ${total} 题`;
+  document.getElementById('progressAnswered').textContent = `已答 ${answered} 题`;
+}
+
+function updateNavUI() {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  prevBtn.disabled = currentQ === 0;
+  const answered = Object.keys(choices).length;
+  if (currentQ === questions.length - 1 && answered === questions.length) {
+    nextBtn.textContent = '查看行为画像';
+    nextBtn.onclick = openSubmitModal;
+    nextBtn.disabled = false;
+  } else if (currentQ === questions.length - 1) {
+    nextBtn.textContent = '下一题 →';
+    nextBtn.onclick = nextQuestion;
+    nextBtn.disabled = false;
+  } else {
+    nextBtn.textContent = '下一题 →';
+    nextBtn.onclick = nextQuestion;
+    nextBtn.disabled = false;
+  }
+}
+
+function prevQuestion() { if (currentQ > 0) showQ(currentQ - 1); }
+function nextQuestion() { if (currentQ < questions.length - 1) showQ(currentQ + 1); }
+
+function openSubmitModal() {
+  if (Object.keys(choices).length < questions.length) {
+    const missed = questions.filter(q => choices[q.id] === undefined);
+    alert('还有 ' + missed.length + ' 题未作答，请完成后提交。');
+    showQ(questions.findIndex(q => choices[q.id] === undefined));
+    return;
+  }
+  document.getElementById('submitModal').classList.add('show');
+}
+
+function closeSubmitModal() {
+  document.getElementById('submitModal').classList.remove('show');
+}
+
+function confirmSubmit() {
+  document.getElementById('submitModal').classList.remove('show');
+  finished = true;
+  hide('questions');
+  hide('navBtns');
+  hide('progressWrap');
+  showResult();
+}
+
+// ============================================================
+// 结果计算
+// ============================================================
+function showResult() {
+  // 每人每题最高得分 100，加权平均
+  let totalScore = 0;
+  let dimTotals = [0, 0, 0, 0]; // 风险评估, 边界意识, 信息验证, 利益洞察
+  const maxSingleScore = 100;
+
+  questions.forEach(q => {
+    const oi = choices[q.id];
+    const opt = q.options[oi];
+    totalScore += opt.score;
+    for (let d = 0; d < 4; d++) dimTotals[d] += opt.dims[d];
+  });
+
+  const avgScore = Math.round(totalScore / questions.length);
+  const dimAvgs = dimTotals.map(v => Math.round(v / questions.length));
+  const dimNames = ['风险评估', '边界意识', '信息验证', '利益洞察'];
+  const dimMax = 25;
+
+  // 等级
+  let levelClass, profileName, profileDesc;
+  if (avgScore >= 80) {
+    levelClass = 'level-a'; profileName = '社会洞察者'; profileDesc = '你对社会情境中的利益关系、风险边界和信息不对称有敏锐的感知。你的决策模式倾向于先验证再行动，在保护自己和维护关系之间取得了平衡。大多数的情景中你展现出了远超同龄人的成熟度。';
+  } else if (avgScore >= 65) {
+    levelClass = 'level-b'; profileName = '有经验的观察者'; profileDesc = '你在大部分情境中能够做出合理的判断，但某些特定场景下仍有盲区。你的直觉通常是好的，但直觉有时也需要独立信息的支撑。你已经走在逐步建立成熟社会认知的路上。';
+  } else if (avgScore >= 50) {
+    levelClass = 'level-c'; profileName = '过渡中的学习者'; profileDesc = '你的社会认知正处于校园思维向现实思维过渡的阶段。在一些场景中你能看到风险，但在另一些场景中情感因素或从众心理仍然主导着你的选择。这份测试中你所暴露的盲区，正是你可以优先关注的成长方向。';
+  } else if (avgScore >= 35) {
+    levelClass = 'level-d'; profileName = '信任优先者'; profileDesc = '你倾向于以善意解读他人的行为，这是珍贵的品质，但在复杂的社会环境中，纯粹的信任可能让你成为他人利益计算中的变量。不是说世界充满恶意，而是善意需要信息和边界的保护。';
+  } else {
+    levelClass = 'level-e'; profileName = '校园模式思考者'; profileDesc = '你的决策模式仍然延续着校园时期的框架——相信权威、相信熟人、相信书面承诺、相信多数人的选择。这些在校园里是合理策略，但在真实社会中，每一份善意背后都需要验证，每一个承诺背后都需要制度保障。这份测试是你了解这种差异的第一步。';
+  }
+
+  document.getElementById('scoreNumber').textContent = avgScore;
+  const tag = document.getElementById('profileTag');
+  tag.className = 'profile-tag ' + levelClass;
+  tag.textContent = profileName;
+  document.getElementById('resultSummary').innerHTML = `<p>${profileDesc}</p>`;
+
+  // 维度卡片
+  const dimsHtml = dimNames.map((name, i) => {
+    const val = dimAvgs[i];
+    const pct = Math.round((val / dimMax) * 100);
+    let fillClass = 'fill-high';
+    if (pct < 50) fillClass = 'fill-low';
+    else if (pct < 70) fillClass = 'fill-mid';
+    return `
+      <div class="dim-card">
+        <div class="dim-name">${name}</div>
+        <div class="dim-bar-bg"><div class="dim-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+        <div class="dim-score">${val} / ${dimMax} 分</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('dimensionsGrid').innerHTML = dimsHtml;
+
+  // 逐题回顾
+  const reviewHtml = questions.map((q, idx) => {
+    const oi = choices[q.id];
+    const opt = q.options[oi];
+    const tend = TENDENCY[opt.tendency];
+    return `
+      <div class="review-item">
+        <div class="ri-header">
+          <span class="ri-num">第 ${idx + 1} 题</span>
+          <span class="ri-tendency ${tend.cls}">${tend.label}</span>
+        </div>
+        <div class="ri-choice">你的选择：${'ABCD'[oi]}. ${opt.text}</div>
+        <div class="ri-read">${opt.read}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('resultDetail').innerHTML = reviewHtml;
+  document.getElementById('resultWrap').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartTest() {
+  hide('resultWrap');
+  document.getElementById('resultDetail').innerHTML = '';
+  document.getElementById('dimensionsGrid').innerHTML = '';
+  document.getElementById('questions').innerHTML = '';
+  showBlock('cover');
+  currentQ = 0;
+  choices = {};
+  finished = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// helpers
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+function showBlock(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).style.display = 'block'; }
+</script>
+</body>
+</html>
